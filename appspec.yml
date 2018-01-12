@@ -5,6 +5,11 @@ files:
     destination: /home/ec2-user
     
 hooks:
+
+  BeforeInstall:
+    - location: scripts/npm-before.sh
+      runas: root
+      timeout: 300
   AfterInstall:
     - location: scripts/npm-install.sh
       runas: root
