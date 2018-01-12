@@ -1,0 +1,57 @@
+dist: trusty
+sudo: required
+
+language: node_js
+node_js:
+  - "stable"
+addons:
+  sonarcloud:
+    organization: "likithjoel-github"
+    token:
+      secure: "1beb1875ba73d127b45082bf0359ee407bee220b"
+  #sauce_connect:
+    #username: "likithjoel"
+    #access_key: "15bcd862-615a-4775-ba98-feeab15399cc"
+    
+script:
+  - sonar-scanner
+  
+before_deploy:
+  - cd ..
+  - zip -r logan1.zip *
+  - mkdir -p "dpl_cd_upload"
+  - mv logan1.zip dpl_cd_upload/logan1.zip || true
+  
+  
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    bucket: travis-resume
+    region: us-east-1
+    skip_cleanup: true
+    acl: public_read
+    detect_encoding: true
+    on:
+      repo: Likithjoel/test3
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: travis-resume
+    key: logan1.zip
+    bundle_type: zip
+    application: TestApplication
+    deployment_group: TestApplication
+    region: us-east-1
+    on:
+      repo: Likithjoel/test3
+      all_branches: true
+after_deploy:
+  - echo "Performing after deploy procedures..."  
+  - unzip logan1.zip
+  
+
+
+  
