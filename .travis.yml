@@ -1,9 +1,9 @@
 dist: trusty
 sudo: required
 
-language: node_js
-node_js:
-  - "stable"
+language: generic
+#node_js:
+ # - "stable"
 addons:
   sonarcloud:
     organization: "likithjoel-github"
@@ -18,9 +18,9 @@ script:
   
 before_deploy:
   - cd ..
-  - zip -r logan1.zip *
+  - zip -r logan2.zip *
   - mkdir -p "dpl_cd_upload"
-  - mv logan1.zip dpl_cd_upload/logan1.zip || true
+  - mv logan2.zip dpl_cd_upload/logan2.zip || true
   
   
 deploy:
@@ -34,24 +34,20 @@ deploy:
     acl: public_read
     detect_encoding: true
     on:
-      repo: Likithjoel/test3
+      repo: Likithjoel/test4
       all_branches: true
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
     bucket: travis-resume
-    key: logan1.zip
+    key: logan2.zip
     bundle_type: zip
     application: TestApplication
     deployment_group: TestApplication
     region: us-east-1
     on:
-      repo: Likithjoel/test3
+      repo: Likithjoel/test4
       all_branches: true
 after_deploy:
   - echo "Performing after deploy procedures..."  
-  - unzip logan1.zip
-  
-
-
-  
+  - unzip logan2.zip
